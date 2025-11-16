@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Arn Electric Solutions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+   <!-- Header -->
+<header>
+    <div class="container header-container">
+        <div class="logo">
+            <h1>Arn <span>Electric</span></h1>
+        </div>
+        <div class="mobile-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+        <nav>
+            <ul class="nav-menu" id="main-nav">
+                <!-- Navigation dynamically loaded by JavaScript -->
+            </ul>
+        </nav>
+    </div>
+</header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Checkout</h1>
+            <p>Complete your order with secure payment</p>
+        </div>
+    </section>
+
+    <!-- Checkout Content -->
+    <section class="page-content">
+        <div class="container">
+            <div class="checkout-page">
+                <div class="checkout-form">
+                    <!-- Customer Details -->
+                    <div class="checkout-section">
+                        <h2>Customer Details</h2>
+                        <div class="form-group">
+                            <label for="name">Full Name *</label>
+                            <input type="text" id="name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number *</label>
+                            <input type="tel" id="phone" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Delivery Address *</label>
+                            <textarea id="address" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="pincode">Pincode *</label>
+                            <input type="text" id="pincode" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <!-- Delivery Method -->
+                    <div class="checkout-section">
+                        <h2>Delivery Method</h2>
+                        <div class="payment-options">
+                            <div class="payment-option active" data-method="home">
+                                <div class="payment-icon">
+                                    <i class="fas fa-truck"></i>
+                                </div>
+                                <p>Home Delivery</p>
+                                <small>Free on orders above ₹500</small>
+                            </div>
+                            <div class="payment-option" data-method="pickup">
+                                <div class="payment-icon">
+                                    <i class="fas fa-store"></i>
+                                </div>
+                                <p>Pick-up from Shop</p>
+                                <small>Collect from our store</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div class="checkout-section">
+                        <h2>Payment Method</h2>
+                        <div class="payment-options">
+                            <div class="payment-option active" data-payment="cod">
+                                <div class="payment-icon">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                </div>
+                                <p>Cash on Delivery</p>
+                                <small>Pay when you receive</small>
+                            </div>
+                            <div class="payment-option" data-payment="upi">
+                                <div class="payment-icon">
+                                    <i class="fas fa-mobile-alt"></i>
+                                </div>
+                                <p>UPI Payment</p>
+                                <small>GPay, PhonePe, Paytm</small>
+                            </div>
+                        </div>
+
+                        <!-- UPI Payment Details (Hidden by default) -->
+                        <div class="upi-details" id="upi-details" style="display: none;">
+                            <div class="form-group">
+                                <label>UPI ID for Payment</label>
+                                <div class="upi-id-display">
+                                    <span>arn.electric@okhdfcbank</span>
+                                    <button type="button" class="btn-copy" onclick="copyUPI()">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                                <small>Please make payment to this UPI ID and share screenshot on WhatsApp</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order Summary -->
+                    <div class="checkout-section">
+                        <h2>Order Summary</h2>
+                        <div class="order-items">
+                            <!-- Order items will be loaded by JavaScript -->
+                        </div>
+                        <div class="cart-summary">
+                            <div class="summary-row">
+                                <span>Subtotal:</span>
+                                <span id="checkout-subtotal">₹0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Delivery Charges:</span>
+                                <span id="checkout-delivery">₹0</span>
+                            </div>
+                            <div class="summary-row total">
+                                <span>Total Amount:</span>
+                                <span id="checkout-total">₹0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Place Order -->
+                    <div class="checkout-section">
+                        <button id="place-order" class="btn btn-full">
+                            <i class="fas fa-shopping-bag"></i>
+                            Place Order
+                        </button>
+                        <p class="terms-notice">
+                            By placing this order, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <!-- Footer Component -->
+    <footer-component></footer-component>
+    
+    <!-- Scripts -->
+    <script src="footer-component.js"></script>
+    <!-- Sticky Call Button -->
+    <a href="tel:+919084984045" class="sticky-call">
+        <i class="fas fa-phone"></i>
+    </a>
+
+    <!-- Order Success Modal -->
+    <div class="modal" id="order-success">
+        <div class="modal-content">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2>Order Placed Successfully!</h2>
+            <p>Thank you for your order. Your order ID is: <strong id="order-id">ARN-2025-001</strong></p>
+            <p>We will contact you shortly to confirm the details.</p>
+            <div class="success-actions">
+                <button class="btn" onclick="continueShopping()">Continue Shopping</button>
+                <a href="https://wa.me/919084984045" class="btn btn-secondary">
+                    <i class="fab fa-whatsapp"></i>
+                    Track on WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
