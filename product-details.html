@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - Arun Electric Solutions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <h1>Arun <span>Electric</span></h1>
+            </div>
+            <div class="mobile-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <nav>
+                <ul class="nav-menu" id="main-nav">
+                    <!-- Navigation dynamically loaded -->
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Product Details Content -->
+    <section class="page-content">
+        <div class="container">
+            <div class="product-details-container">
+                <!-- Breadcrumb -->
+                <div class="breadcrumb">
+                    <a href="index.html">Home</a> &gt; 
+                    <a href="products.html">Products</a> &gt; 
+                    <span id="product-category">Category</span> &gt; 
+                    <span id="product-name">Product Name</span>
+                </div>
+
+                <!-- Product Details -->
+                <div class="product-details">
+                    <!-- Product Images -->
+                    <div class="product-images">
+                        <div class="main-image">
+                            <img id="main-product-img" src="" alt="Product Image">
+                        </div>
+                        <div class="image-thumbnails">
+                            <!-- Thumbnails will be loaded by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Product Info -->
+                    <div class="product-info">
+                        <h1 id="detail-product-name">Product Name</h1>
+                        <div class="product-rating" id="detail-product-rating">
+                            <!-- Rating stars -->
+                        </div>
+                        <div class="product-price" id="detail-product-price">₹0</div>
+                        
+                        <!-- Product Specifications -->
+                        <div class="product-specs">
+                            <h3>Specifications</h3>
+                            <div class="specs-list" id="product-specs">
+                                <!-- Specifications will be loaded by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Product Features -->
+                        <div class="product-features">
+                            <h3>Key Features</h3>
+                            <ul id="product-features">
+                                <!-- Features will be loaded by JavaScript -->
+                            </ul>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="product-actions">
+                            <div class="quantity-selector">
+                                <label for="quantity">Quantity:</label>
+                                <div class="quantity-controls">
+                                    <button class="qty-btn" id="decrease-qty">-</button>
+                                    <input type="number" id="quantity" value="1" min="1" max="10">
+                                    <button class="qty-btn" id="increase-qty">+</button>
+                                </div>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn btn-primary" id="add-to-cart-detail">
+                                    <i class="fas fa-shopping-cart"></i> Add to Cart
+                                </button>
+                                <button class="btn btn-secondary" id="buy-now">
+                                    <i class="fas fa-bolt"></i> Buy Now
+                                </button>
+                                <button class="btn btn-outline" data-wa-type="product_info">
+                                    <i class="fab fa-whatsapp"></i> Inquire
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Delivery Info -->
+                        <div class="delivery-info">
+                            <div class="delivery-item">
+                                <i class="fas fa-truck"></i>
+                                <span>Free delivery on orders above ₹500</span>
+                            </div>
+                            <div class="delivery-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>1 Year Warranty</span>
+                            </div>
+                            <div class="delivery-item">
+                                <i class="fas fa-undo"></i>
+                                <span>7 Days Return Policy</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Description -->
+                <div class="product-description">
+                    <h3>Product Description</h3>
+                    <div class="description-content" id="product-description">
+                        <!-- Description will be loaded by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Customer Reviews -->
+                <div class="customer-reviews">
+                    <h3>Customer Reviews</h3>
+                    <div class="reviews-container">
+                        <div class="review-summary">
+                            <div class="overall-rating">
+                                <div class="rating-score" id="overall-rating">4.5</div>
+                                <div class="rating-stars" id="overall-stars"></div>
+                                <div class="total-reviews">Based on 24 reviews</div>
+                            </div>
+                        </div>
+                        <div class="reviews-list" id="reviews-list">
+                            <!-- Reviews will be loaded by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Related Products -->
+                <div class="related-products">
+                    <h3>Related Products</h3>
+                    <div class="products-grid" id="related-products">
+                        <!-- Related products will be loaded by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+     <!-- Footer Component -->
+    <footer-component></footer-component>
+    
+    <!-- Scripts -->
+    <script src="footer-component.js"></script>
+    <!-- Sticky Call Button -->
+    <a href="tel:+919084984045" class="sticky-call">
+        <i class="fas fa-phone"></i>
+    <!-- Scripts -->
+    <script src="script.js"></script>
+    <script src="product-details.js"></script>
+</body>
+</html>

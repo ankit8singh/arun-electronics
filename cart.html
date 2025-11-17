@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - Arun Electric Solutions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+   <!-- Header -->
+<header>
+    <div class="container header-container">
+        <div class="logo">
+            <h1>Arun <span>Electric</span></h1>
+        </div>
+        <div class="mobile-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+        <nav>
+            <ul class="nav-menu" id="main-nav">
+                <!-- Navigation dynamically loaded by JavaScript -->
+            </ul>
+        </nav>
+    </div>
+</header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Shopping Cart</h1>
+            <p>Review your items and proceed to checkout</p>
+        </div>
+    </section>
+
+    <!-- Cart Content -->
+    <section class="page-content">
+        <div class="container">
+            <div class="cart-page">
+                <div id="cart-items">
+                    <!-- Cart items will be loaded by JavaScript -->
+                </div>
+                
+                <div class="cart-summary">
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span id="cart-subtotal">₹0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Delivery Charges:</span>
+                        <span id="delivery-charges">₹0</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total Amount:</span>
+                        <span id="cart-total">₹0</span>
+                    </div>
+                    <div class="cart-actions">
+                        <a href="products.html" class="btn btn-outline">
+                            <i class="fas fa-arrow-left"></i>
+                            Continue Shopping
+                        </a>
+                        <a href="checkout.html" class="btn" id="proceed-checkout">
+                            Proceed to Checkout
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delivery Info -->
+            <div class="delivery-info">
+                <div class="info-card">
+                    <div class="info-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <div class="info-content">
+                        <h3>Free Delivery</h3>
+                        <p>Free home delivery on orders above ₹500 within city limits. Delivery charges of ₹50 apply for orders below ₹500.</p>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="info-content">
+                        <h3>Quality Guarantee</h3>
+                        <p>All products come with manufacturer warranty. 7-day return policy for defective products.</p>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <div class="info-content">
+                        <h3>Need Help?</h3>
+                        <p>Contact us for product recommendations or installation guidance: +91 9084984045</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <!-- Footer Component -->
+    <footer-component></footer-component>
+    
+    <!-- Scripts -->
+    <script src="footer-component.js"></script>
+
+    <!-- Sticky Call Button -->
+    <a href="tel:+919084984045" class="sticky-call">
+        <i class="fas fa-phone"></i>
+    </a>
+
+    <script src="script.js"></script>
+</body>
+</html>
