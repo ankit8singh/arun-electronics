@@ -15,17 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update cart count
     updateCartCount();
     
-    // ✅ NEW: Initialize Featured Products on Homepage
-    if (window.location.pathname.includes('index.html') || 
-        window.location.pathname === '/' || 
-        window.location.pathname.endsWith('/')) {
-        renderFeaturedProducts();
-    }
     
-    // Mobile menu toggle
-    if (mobileToggle) {
-        mobileToggle.addEventListener('click', toggleMobileMenu);
-    }
     
     // Add to cart buttons
     document.querySelectorAll('.add-to-cart').forEach(button => {
@@ -92,27 +82,60 @@ function initNavigation() {
     initMobileMenu();
 }
 
+// Mobile menu functionality - FIXED VERSION
 function initMobileMenu() {
     const mobileToggle = document.querySelector('.mobile-toggle');
     const navMenu = document.querySelector('.nav-menu');
     
     if (mobileToggle && navMenu) {
-        mobileToggle.addEventListener('click', function() {
+        console.log('📱 Mobile menu elements found, adding event listeners...');
+        
+        // Remove any existing event listeners
+        const newToggle = mobileToggle.cloneNode(true);
+        mobileToggle.parentNode.replaceChild(newToggle, mobileToggle);
+        
+        // Get the new toggle element
+        const newMobileToggle = document.querySelector('.mobile-toggle');
+        
+        // Add click event listener
+        newMobileToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('📱 Mobile toggle clicked');
+            
+            // Toggle active class on nav menu
             navMenu.classList.toggle('active');
-            mobileToggle.classList.toggle('active');
+            newMobileToggle.classList.toggle('active');
+            
+            console.log('📱 Nav menu active:', navMenu.classList.contains('active'));
+        });
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!navMenu.contains(e.target) && !newMobileToggle.contains(e.target)) {
+                navMenu.classList.remove('active');
+                newMobileToggle.classList.remove('active');
+            }
+        });
+        
+        // Close mobile menu when clicking on nav links
+        navMenu.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A') {
+                navMenu.classList.remove('active');
+                newMobileToggle.classList.remove('active');
+            }
+        });
+        
+    } else {
+        console.log('❌ Mobile menu elements not found:', {
+            mobileToggle: !!mobileToggle,
+            navMenu: !!navMenu
         });
     }
 }
 
 // Toggle mobile menu
-function toggleMobileMenu() {
-    if (navMenu) {
-        navMenu.classList.toggle('active');
-    }
-    if (mobileToggle) {
-        mobileToggle.classList.toggle('active');
-    }
-}
+
 
 // ==================== CART FUNCTIONS ====================
 
