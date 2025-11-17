@@ -998,19 +998,70 @@ function placeOrder() {
 }
 
 // Create WhatsApp message
-function createWhatsAppMessage(order) {
-    let message = `New Order - ${order.orderId}\n\n`;
-    message += `Customer: ${order.customer.name}\n`;
-    message += `Phone: ${order.customer.phone}\n`;
-    message += `Address: ${order.customer.address}, ${order.customer.pincode}\n\n`;
-    message += `Order Details:\n`;
+// function createWhatsAppMessage(order) {
+//     let message = `New Order - ${order.orderId}\n\n`;
+//     message += `Customer: ${order.customer.name}\n`;
+//     message += `Phone: ${order.customer.phone}\n`;
+//     message += `Address: ${order.customer.address}, ${order.customer.pincode}\n\n`;
+//     message += `Order Details:\n`;
     
+//     order.items.forEach(item => {
+//         message += `- ${item.name} (Qty: ${item.quantity}) - ₹${item.price * item.quantity}\n`;
+//     });
+    
+//     message += `\nTotal: ${order.total}\n`;
+//     message += `Order Date: ${order.date}`;
+    
+//     return message;
+// }
+
+// SIMPLE VERSION - Create WhatsApp message with delivery & payment
+function createWhatsAppMessage(order) {
+    let message = `🛍️ *NEW ORDER - ${order.orderId}*\n\n`;
+    
+    // Customer Details
+    message += `👤 *CUSTOMER DETAILS:*\n`;
+    message += `• Name: ${order.customer.name}\n`;
+    message += `• Phone: ${order.customer.phone}\n`;
+    message += `• Address: ${order.customer.address}, ${order.customer.pincode}\n\n`;
+    
+    // Delivery & Payment
+    message += `🚚 *DELIVERY:* ${order.delivery.method}\n`;
+    message += `💳 *PAYMENT:* ${order.payment.method}\n`;
+    message += `📊 *PAYMENT STATUS:* ${order.payment.status}\n\n`;
+    
+    // UPI Instructions if applicable
+    if (order.payment.method === 'UPI Payment 📱') {
+        message += `📱 *UPI INSTRUCTIONS:*\n`;
+        message += `• UPI ID: arn.electric@okhdfcbank\n`;
+        message += `• Amount: ₹${order.summary.total}\n`;
+        message += `• Please share payment screenshot\n\n`;
+    }
+    
+    // Order Items
+    message += `📦 *ORDER ITEMS:*\n`;
     order.items.forEach(item => {
-        message += `- ${item.name} (Qty: ${item.quantity}) - ₹${item.price * item.quantity}\n`;
+        message += `• ${item.name} (Qty: ${item.quantity}) - ₹${item.total}\n`;
     });
     
-    message += `\nTotal: ${order.total}\n`;
-    message += `Order Date: ${order.date}`;
+    // Order Summary
+    message += `\n💰 *ORDER SUMMARY:*\n`;
+    message += `• Subtotal: ₹${order.summary.subtotal}\n`;
+    
+    if (order.summary.discount > 0) {
+        message += `• Discount: -₹${order.summary.discount}\n`;
+    }
+    
+    message += `• Delivery: ₹${order.summary.delivery}\n`;
+    message += `• *Total: ₹${order.summary.total}*\n\n`;
+    
+    // Additional Info
+    message += `📅 Order Date: ${order.date}\n`;
+    message += `🆔 Order ID: ${order.orderId}\n\n`;
+    
+    if (order.coupon) {
+        message += `🎫 Coupon Used: ${order.coupon}\n`;
+    }
     
     return message;
 }
@@ -1228,3 +1279,4 @@ function getLatestProducts() {
     // First 4 products return karo
     return sortedProducts.slice(0, 4);
 }
+
