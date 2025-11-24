@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order History - Arun Electric Solutions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Protect this page - require login
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof auth !== 'undefined' && !auth.isLoggedIn()) {
+                auth.requireLogin('view order history');
+            }
+        });
+    </script>
+    <style>
+        .order-history {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .admin-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .order-search {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .order-search input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .orders-container {
+            margin-top: 30px;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #3498db;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .order-info h4 {
+            margin: 0 0 5px 0;
+            color: #2c3e50;
+        }
+
+        .order-meta {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .date,
+        .amount {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .status {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status.confirmed {
+            background: #cce7ff;
+            color: #004085;
+        }
+
+        .status.delivered {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .order-items {
+            margin: 15px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .order-item {
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .return-expired {
+            color: #e74c3c;
+            font-style: italic;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #7f8c8d;
+        }
+
+        .test-order-btn {
+            background: #95a5a6;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-left: 10px;
+        }
+        /* Return Status Styles */
+.return-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-left: 8px;
+}
+
+.return-none { background: #f8f9fa; color: #6c757d; }
+.return-requested { background: #fff3cd; color: #856404; }
+.return-approved { background: #cce7ff; color: #004085; }
+.return-rejected { background: #f8d7da; color: #721c24; }
+.return-received { background: #d1ecf1; color: #0c5460; }
+.return-refunded { background: #d4edda; color: #155724; }
+
+.return-details {
+    font-size: 0.85rem;
+    margin-top: 5px;
+    padding: 5px;
+    border-radius: 3px;
+}
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <div class="logo">
+                    <a href="index.html">
+                        <h1>Arun <span>Electric</span></h1>
+                    </a>
+                </div>
+            </div>
+            <div class="mobile-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <nav>
+                <ul class="nav-menu" id="main-nav">
+                    <!-- Navigation dynamically loaded by JavaScript -->
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Order History</h1>
+            <p>View your past orders and request returns</p>
+        </div>
+    </section>
+
+    <!-- Order History Content -->
+
+    <!-- Order History Content -->
+    <section class="page-content">
+        <div class="container order-history">
+            <!-- For Logged-in Users -->
+            <div id="userOrdersSection" style="display: none;">
+                <div class="admin-card">
+                    <h3><i class="fas fa-user"></i> Your Orders</h3>
+                    <p>Welcome back, <span id="userName"></span>! Here are your orders:</p>
+                    <div class="orders-list" id="userOrdersList">
+                        <!-- User orders will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- For Guest Users (Phone Search) -->
+            <div id="guestOrdersSection">
+                <div class="admin-card">
+                    <h3>Find Your Orders</h3>
+                    <div class="order-search">
+                        <input type="tel" id="customerPhone" placeholder="Enter your phone number" class="form-control">
+                        <button class="btn" onclick="loadCustomerOrders()">
+                            <i class="fas fa-search"></i> Find Orders
+                        </button>
+                        <button class="test-order-btn" onclick="addTestOrder()">
+                            <i class="fas fa-plus"></i> Add Test Order
+                        </button>
+                    </div>
+                    <p style="color: #666; font-size: 0.9rem; margin-top: 10px;">
+                        Use the same phone number you used during order placement
+                    </p>
+                </div>
+
+                <!-- Orders List -->
+                <div class="orders-container" id="ordersContainer" style="display: none;">
+                    <h3>Your Orders</h3>
+                    <div class="orders-list" id="customerOrdersList">
+                        <!-- Orders will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Footer -->
+    <footer-component></footer-component>
+
+    <!-- Scripts -->
+    <script src="footer-component.js"></script>
+    <script src="supabase-config.js"></script>
+    <script src="supabase-products.js"></script>
+    <script src="auth.js"></script> <!-- ✅ AUTH BEFORE SCRIPT -->
+    <script src="script.js"></script>
+    <!-- Order History Specific JavaScript -->
+    <script>
+
+        // ✅ ENHANCED ORDER HISTORY SYSTEM
+        function loadCustomerOrders() {
+            console.log('🔍 loadCustomerOrders function called');
+
+            const phone = document.getElementById('customerPhone').value;
+            if (!phone) {
+                alert('Please enter your phone number');
+                return;
+            }
+
+            console.log('📞 Searching orders for phone:', phone);
+
+            const orders = JSON.parse(localStorage.getItem('adminOrders')) || [];
+            console.log('📦 All orders in localStorage:', orders);
+
+            const customerOrders = orders.filter(order => {
+                console.log('Comparing:', order.customer?.phone, 'with:', phone);
+                return order.customer?.phone === phone;
+            });
+
+            console.log('👤 Customer orders found:', customerOrders);
+            displayOrders(customerOrders, 'customerOrdersList', 'ordersContainer');
+        }
+
+        // ✅ NEW: Load orders for logged-in user
+        function loadUserOrders() {
+            if (typeof auth === 'undefined' || !auth.isLoggedIn()) {
+                console.log('❌ User not logged in');
+                return;
+            }
+
+            const userPhone = auth.currentUser.phone;
+            console.log('📱 Loading orders for logged-in user:', userPhone);
+
+            if (!userPhone) {
+                console.log('❌ User phone not available');
+                return;
+            }
+
+            const orders = JSON.parse(localStorage.getItem('adminOrders')) || [];
+            const userOrders = orders.filter(order => order.customer?.phone === userPhone);
+
+            console.log('👤 User orders found:', userOrders);
+
+            if (userOrders.length > 0) {
+                // Show user section, hide guest section
+                document.getElementById('userOrdersSection').style.display = 'block';
+                document.getElementById('guestOrdersSection').style.display = 'none';
+                document.getElementById('userName').textContent = auth.currentUser.name;
+
+                displayOrders(userOrders, 'userOrdersList', 'userOrdersSection');
+            } else {
+                // No orders found for user, show guest section
+                document.getElementById('userOrdersSection').style.display = 'none';
+                document.getElementById('guestOrdersSection').style.display = 'block';
+                document.getElementById('customerPhone').value = userPhone; // Auto-fill phone
+            }
+        }
+
+        // ✅ NEW: Display orders function (common for both)
+        function displayOrders(orders, listElementId, containerElementId) {
+            const ordersList = document.getElementById(listElementId);
+            const container = document.getElementById(containerElementId);
+
+            if (orders.length === 0) {
+                ordersList.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-search" style="font-size: 3rem; color: #ccc; margin-bottom: 15px;"></i>
+                <h3>No Orders Found</h3>
+                <p>No orders found for your account.</p>
+                <a href="products.html" class="btn" style="margin-top: 15px;">
+                    <i class="fas fa-bolt"></i> Start Shopping
+                </a>
+            </div>
+        `;
+                if (containerElementId === 'ordersContainer') {
+                    container.style.display = 'block';
+                }
+                return;
+            }
+
+            let html = '';
+            orders.forEach(order => {
+                const canReturn = canReturnOrder(order);
+
+                html += `
+            <div class="order-card">
+                <div class="order-header">
+                    <div class="order-info">
+                        <h4>Order #${order.orderId}</h4>
+                        <div class="order-meta">
+                            <span class="date">${order.date}</span>
+                            <span class="amount">₹${order.summary?.total || 0}</span>
+                            <span class="status ${order.status || 'pending'}">${order.status || 'pending'}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="order-items">
+                    <strong>Items:</strong>
+                    ${order.items.map(item => `
+                        <div class="order-item">• ${item.name} (Qty: ${item.quantity}) - ₹${item.total}</div>
+                    `).join('')}
+                </div>
+                <div class="return-status-section" style="margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+    <strong>Return Status:</strong>
+    <span id="returnStatus-${order.order_id || order.orderId}" class="return-status-badge">
+        <span class="return-badge return-none">No Return Requested</span>
+    </span>
+    <div id="returnDetails-${order.order_id || order.orderId}" class="return-details" style="margin-top: 5px; font-size: 0.9rem;">
+        <!-- Return details yahan dynamically update honge -->
+    </div>
+</div>
+                
+                <div class="order-actions">
+                    ${canReturn ? `
+                        <a href="return-request.html?orderId=${order.orderId}" class="btn btn-outline">
+                            <i class="fas fa-undo"></i> Request Return
+                        </a>
+                    ` : '<span class="return-expired">Return period expired</span>'}
+                    
+                    <a href="https://wa.me/919084984045?text=Query about order ${order.orderId}" 
+                       class="btn" target="_blank">
+                        <i class="fab fa-whatsapp"></i> Get Help
+                    </a>
+                    
+                    <button class="btn btn-outline" onclick="viewOrderDetails('${order.orderId}')">
+                        <i class="fas fa-eye"></i> View Details
+                    </button>
+                </div>
+            </div>
+        `;
+            });
+
+            ordersList.innerHTML = html;
+            if (containerElementId === 'ordersContainer') {
+                container.style.display = 'block';
+            }
+        }
+
+        // ✅ NEW: View order details
+        function viewOrderDetails(orderId) {
+            const orders = JSON.parse(localStorage.getItem('adminOrders')) || [];
+            const order = orders.find(o => o.orderId === orderId);
+
+            if (order) {
+                const details = `
+Order ID: ${order.orderId}
+Date: ${order.date}
+Status: ${order.status}
+Customer: ${order.customer.name} (${order.customer.phone})
+Address: ${order.customer.address}, ${order.customer.pincode}
+
+Items:
+${order.items.map(item => `• ${item.name} x${item.quantity} - ₹${item.total}`).join('\n')}
+
+Total: ₹${order.summary.total}
+Delivery: ${order.delivery.method}
+Payment: ${order.payment.method}
+        `;
+                alert(details);
+            }
+        }
+
+        // ✅ Return eligibility check function
+        function canReturnOrder(order) {
+            try {
+                const orderDate = new Date(order.createdAt || order.date);
+                const currentDate = new Date();
+                const diffTime = currentDate - orderDate;
+                const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+                return diffDays <= 7 && order.status !== 'cancelled';
+            } catch (error) {
+                console.error('Error checking return eligibility:', error);
+                return false;
+            }
+        }
+
+        // ✅ Test order add function
+        function addTestOrder() {
+            console.log('➕ Adding test order...');
+
+            const userPhone = (typeof auth !== 'undefined' && auth.isLoggedIn()) ? auth.currentUser.phone : '9876543210';
+
+            const testOrder = {
+                orderId: 'ARN-TEST-' + Date.now(),
+                customer: {
+                    name: auth?.currentUser?.name || 'Test Customer',
+                    phone: userPhone,
+                    email: auth?.currentUser?.email || 'test@example.com',
+                    address: 'Test Address, Test City',
+                    pincode: '123456'
+                },
+                delivery: {
+                    method: 'Home Delivery',
+                    charges: 0
+                },
+                payment: {
+                    method: 'Cash on Delivery',
+                    status: 'pending'
+                },
+                status: 'delivered',
+                items: [
+                    {
+                        name: 'LED Bulb 9W',
+                        quantity: 2,
+                        price: 120,
+                        total: 240
+                    },
+                    {
+                        name: 'Modular Switch',
+                        quantity: 1,
+                        price: 85,
+                        total: 85
+                    }
+                ],
+                summary: {
+                    subtotal: 325,
+                    delivery: 0,
+                    total: 325
+                },
+                date: new Date().toLocaleString('en-IN'),
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+
+            const orders = JSON.parse(localStorage.getItem('adminOrders')) || [];
+            orders.push(testOrder);
+            localStorage.setItem('adminOrders', JSON.stringify(orders));
+
+            console.log('✅ Test order added:', testOrder);
+
+            // Auto-fill phone number and search
+            document.getElementById('customerPhone').value = userPhone;
+
+            // Reload orders
+            if (typeof auth !== 'undefined' && auth.isLoggedIn()) {
+                loadUserOrders();
+            } else {
+                loadCustomerOrders();
+            }
+
+            alert('Test order added successfully!');
+        }
+
+        // ✅ PAGE LOAD INITIALIZATION
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('🛒 Order History Page Loaded');
+            console.log('📊 Orders in localStorage:', JSON.parse(localStorage.getItem('adminOrders')) || []);
+
+            // Navigation initialize karo
+            if (typeof initNavigation === 'function') {
+                initNavigation();
+            }
+              setupReturnStatusUpdates();
+
+            // ✅ AUTO-LOAD ORDERS BASED ON LOGIN STATUS
+            if (typeof auth !== 'undefined' && auth.isLoggedIn()) {
+                console.log('👤 User is logged in, loading user orders...');
+                loadUserOrders();
+            } else {
+                console.log('👤 User not logged in, showing guest section');
+                document.getElementById('userOrdersSection').style.display = 'none';
+                document.getElementById('guestOrdersSection').style.display = 'block';
+            }
+        });
+
+        // ✅ REAL-TIME RETURN STATUS UPDATES
+function setupReturnStatusUpdates() {
+    console.log('🔄 Setting up return status real-time updates...');
+    
+    // Supabase real-time subscription for return requests
+    supabase
+        .channel('return-updates-channel')
+        .on('postgres_changes',
+            { 
+                event: '*', // INSERT, UPDATE, DELETE sab events
+                schema: 'public', 
+                table: 'return_requests' 
+            },
+            (payload) => {
+                console.log('🔄 Return request update:', payload);
+                updateReturnStatusDisplay(payload.new);
+            }
+        )
+        .subscribe();
+}
+
+// ✅ RETURN STATUS DISPLAY UPDATE KARO
+function updateReturnStatusDisplay(returnRequest) {
+    if (!returnRequest || !returnRequest.order_id) return;
+    
+    const orderId = returnRequest.order_id;
+    const statusElement = document.getElementById(`returnStatus-${orderId}`);
+    const detailsElement = document.getElementById(`returnDetails-${orderId}`);
+    
+    if (!statusElement) {
+        console.log('❌ Return status element not found for order:', orderId);
+        return;
+    }
+    
+    const statusMap = {
+        'requested': { text: 'Return Requested', class: 'return-requested', icon: '🔄' },
+        'approved': { text: 'Approved - Send Items', class: 'return-approved', icon: '✅' },
+        'rejected': { text: 'Return Rejected', class: 'return-rejected', icon: '❌' },
+        'received': { text: 'Items Received', class: 'return-received', icon: '📦' },
+        'refunded': { text: 'Refund Processed', class: 'return-refunded', icon: '💰' }
+    };
+    
+    const statusInfo = statusMap[returnRequest.status] || { text: 'No Return', class: 'return-none', icon: '' };
+    
+    // Update status badge
+    statusElement.innerHTML = `
+        <span class="return-badge ${statusInfo.class}">
+            ${statusInfo.icon} ${statusInfo.text}
+        </span>
+    `;
+    
+    // Update details
+    if (detailsElement) {
+        let detailsHtml = '';
+        
+        switch(returnRequest.status) {
+            case 'approved':
+                detailsHtml = `
+                    <div style="color: #27ae60;">
+                        <i class="fas fa-info-circle"></i> 
+                        Please send items to our store address within 3 days
+                    </div>
+                `;
+                break;
+                
+            case 'received':
+                detailsHtml = `
+                    <div style="color: #2980b9;">
+                        <i class="fas fa-check-circle"></i> 
+                        Items received on ${new Date(returnRequest.updated_at).toLocaleDateString()}
+                    </div>
+                `;
+                break;
+                
+            case 'refunded':
+                detailsHtml = `
+                    <div style="color: #16a085;">
+                        <i class="fas fa-rupee-sign"></i> 
+                        Refund of ₹${returnRequest.refund_amount} processed
+                        ${returnRequest.refund_date ? `on ${new Date(returnRequest.refund_date).toLocaleDateString()}` : ''}
+                    </div>
+                `;
+                break;
+                
+            case 'rejected':
+                detailsHtml = `
+                    <div style="color: #e74c3c;">
+                        <i class="fas fa-times-circle"></i> 
+                        Return request rejected. Contact support for details.
+                    </div>
+                `;
+                break;
+                
+            default:
+                detailsHtml = '';
+        }
+        
+        detailsElement.innerHTML = detailsHtml;
+    }
+    
+    console.log('✅ Return status updated for order:', orderId, returnRequest.status);
+}
+
+// ✅ INITIAL RETURN STATUS LOAD KARO
+async function loadInitialReturnStatuses() {
+    try {
+        console.log('📥 Loading initial return statuses...');
+        
+        const { data: returnRequests, error } = await supabase
+            .from('return_requests')
+            .select('*')
+            .order('created_at', { ascending: false });
+            
+        if (error) throw error;
+        
+        console.log('📊 Return requests loaded:', returnRequests);
+        
+        // Har return request ka status display update karo
+        returnRequests.forEach(returnReq => {
+            updateReturnStatusDisplay(returnReq);
+        });
+        
+    } catch (error) {
+        console.error('❌ Error loading return statuses:', error);
+    }
+}
+
+// ✅ ENHANCED DISPLAY ORDERS FUNCTION
+function displayOrders(orders, listElementId, containerElementId) {
+    const ordersList = document.getElementById(listElementId);
+    const container = document.getElementById(containerElementId);
+
+    if (orders.length === 0) {
+        ordersList.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-search" style="font-size: 3rem; color: #ccc; margin-bottom: 15px;"></i>
+                <h3>No Orders Found</h3>
+                <p>No orders found for your account.</p>
+                <a href="products.html" class="btn" style="margin-top: 15px;">
+                    <i class="fas fa-bolt"></i> Start Shopping
+                </a>
+            </div>
+        `;
+        if (containerElementId === 'ordersContainer') {
+            container.style.display = 'block';
+        }
+        return;
+    }
+
+    let html = '';
+    orders.forEach(order => {
+        const canReturn = canReturnOrder(order);
+        
+        html += `
+            <div class="order-card">
+                <div class="order-header">
+                    <div class="order-info">
+                        <h4>Order #${order.order_id || order.orderId}</h4>
+                        <div class="order-meta">
+                            <span class="date">${order.created_at ? new Date(order.created_at).toLocaleDateString() : order.date}</span>
+                            <span class="amount">₹${order.total_amount || order.summary?.total || 0}</span>
+                            <span class="status ${order.status || 'pending'}">${order.status || 'pending'}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="order-items">
+                    <strong>Items:</strong>
+                    ${order.items ? order.items.map(item => `
+                        <div class="order-item">• ${item.name} (Qty: ${item.quantity}) - ₹${item.total || item.price * item.quantity}</div>
+                    `).join('') : 'No items data'}
+                </div>
+                
+                <!-- ✅ NEW: RETURN STATUS SECTION -->
+                <div class="return-status-section" style="margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                    <strong>Return Status:</strong>
+                    <span id="returnStatus-${order.order_id || order.orderId}" class="return-status-badge">
+                        <span class="return-badge return-none">No Return Requested</span>
+                    </span>
+                    <div id="returnDetails-${order.order_id || order.orderId}" class="return-details" style="margin-top: 5px; font-size: 0.9rem;">
+                        <!-- Return details yahan dynamically update honge -->
+                    </div>
+                </div>
+                
+                <div class="order-actions">
+                    ${canReturn ? `
+                        <a href="return-request.html?orderId=${order.order_id || order.orderId}" class="btn btn-outline">
+                            <i class="fas fa-undo"></i> Request Return
+                        </a>
+                    ` : '<span class="return-expired">Return period expired</span>'}
+                    
+                    <a href="https://wa.me/919084984045?text=Query about order ${order.order_id || order.orderId}" 
+                       class="btn" target="_blank">
+                        <i class="fab fa-whatsapp"></i> Get Help
+                    </a>
+                    
+                    <button class="btn btn-outline" onclick="viewOrderDetails('${order.order_id || order.orderId}')">
+                        <i class="fas fa-eye"></i> View Details
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+
+    ordersList.innerHTML = html;
+    
+    // ✅ Load initial return statuses after orders are displayed
+    setTimeout(() => {
+        loadInitialReturnStatuses();
+    }, 100);
+    
+    if (containerElementId === 'ordersContainer') {
+        container.style.display = 'block';
+    }
+}
+    </script>
+</body>
+
+</html>
