@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Test - Use ANON PUBLIC Key</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body style="font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5;">
+    <div style="max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <h1 style="color: #333; text-align: center;">🔑 Supabase Connection Test</h1>
+        
+        <!-- STEP BY STEP GUIDE -->
+        <div style="background: #d1ecf1; padding: 20px; border-radius: 8px; border: 1px solid #bee5eb; margin-bottom: 20px;">
+            <h3 style="color: #0c5460; margin-top: 0;">📋 Step-by-Step Guide</h3>
+            <ol style="color: #0c5460;">
+                <li>Supabase.com par jao → Your Project → <strong>Settings → API</strong></li>
+                <li><strong>Project URL</strong> copy karo</li>
+                <li><strong>anon public</strong> key copy karo (<span style="background: yellow;">NOT service_role</span>)</li>
+                <li>Neeche credentials daalo</li>
+                <li>Test button click karo</li>
+            </ol>
+            
+            <div style="background: white; padding: 15px; border-radius: 5px; margin-top: 10px;">
+                <img src="https://supabase.com/docs/assets/images/api-config-9f193fb6dfb37056997c10c784009594.png" 
+                     alt="Supabase API Settings" style="max-width: 100%; border: 1px solid #ddd;">
+                <p style="text-align: center; margin: 10px 0 0 0; font-size: 12px; color: #666;">
+                    ✅ <strong>anon public</strong> key use karo - yahi frontend me safe hai
+                </p>
+            </div>
+        </div>
+
+        <!-- CREDENTIALS INPUT -->
+        <div style="background: #fff3cd; padding: 20px; border-radius: 8px; border: 1px solid #ffeaa7; margin-bottom: 20px;">
+            <h3 style="color: #856404; margin-top: 0;">📝 Enter Your Credentials</h3>
+            <div style="display: grid; gap: 15px;">
+                <div>
+                    <label style="font-weight: bold; display: block; margin-bottom: 5px;">Project URL:</label>
+                    <input type="text" id="projectUrl" placeholder="https://your-project.supabase.co" 
+                           style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px; font-family: monospace;"
+                           value="">
+                    <small style="color: #666;">Settings → API → Project URL</small>
+                </div>
+                <div>
+                    <label style="font-weight: bold; display: block; margin-bottom: 5px;">Anon Public Key:</label>
+                    <input type="text" id="anonKey" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." 
+                           style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px; font-family: monospace;"
+                           value="">
+                    <small style="color: #666;">Settings → API → <strong>anon public</strong> (NOT service_role)</small>
+                </div>
+                <button onclick="updateCredentials()" 
+                        style="background: #007bff; color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer; font-size: 16px;">
+                    🚀 Test Connection
+                </button>
+            </div>
+        </div>
+
+        <!-- TEST RESULTS -->
+        <div id="test-results">
+            <h2 style="color: #555;">Test Results:</h2>
+            
+            <div style="display: grid; gap: 12px; margin-top: 20px;">
+                <div id="credentials-status" class="test-item">
+                    <strong>🔑 Credentials:</strong> <span class="status">⏳ Waiting...</span>
+                </div>
+                
+                <div id="library-status" class="test-item">
+                    <strong>📚 Supabase Library:</strong> <span class="status">⏳ Testing...</span>
+                </div>
+                
+                <div id="connection-status" class="test-item">
+                    <strong>🔗 Connection:</strong> <span class="status">⏳ Testing...</span>
+                </div>
+                
+                <div id="table-status" class="test-item">
+                    <strong>📦 Products Table:</strong> <span class="status">⏳ Testing...</span>
+                </div>
+
+                <div id="data-status" class="test-item">
+                    <strong>📊 Sample Data:</strong> <span class="status">⏳ Testing...</span>
+                </div>
+            </div>
+
+            <div id="products-list" style="margin-top: 30px; display: none;">
+                <h3>🎉 Success! Loaded Products:</h3>
+                <div id="products-container" style="border: 1px solid #ddd; padding: 15px; border-radius: 5px; max-height: 300px; overflow-y: auto; background: #f8f9fa;"></div>
+            </div>
+        </div>
+
+        <!-- CONFIGURATION DISPLAY -->
+        <div style="margin-top: 30px; padding: 15px; background: #e2e3e5; border-radius: 5px;">
+            <h3>🔧 Current Configuration:</h3>
+            <p><strong>Project URL:</strong> <code id="config-url" style="background: #f8f9fa; padding: 5px; border-radius: 3px;">Not set</code></p>
+            <p><strong>Anon Key:</strong> <code id="config-key" style="background: #f8f9fa; padding: 5px; border-radius: 3px; word-break: break-all;">Not set</code></p>
+        </div>
+    </div>
+
+    <script>
+        let SUPABASE_URL = '';
+        let SUPABASE_ANON_KEY = '';
+
+        function validateCredentials() {
+            const url = document.getElementById('projectUrl').value.trim();
+            const key = document.getElementById('anonKey').value.trim();
+
+            if (!url) {
+                alert('❌ Please enter Project URL');
+                return false;
+            }
+            if (!key) {
+                alert('❌ Please enter Anon Public Key');
+                return false;
+            }
+            if (!key.startsWith('eyJ')) {
+                alert('⚠️ Anon key should start with "eyJ". Make sure you are using "anon public" key, not "service_role"');
+                return false;
+            }
+            if (!url.includes('.supabase.co')) {
+                alert('⚠️ Project URL should contain ".supabase.co"');
+                return false;
+            }
+
+            return true;
+        }
+
+        function updateCredentials() {
+            if (!validateCredentials()) {
+                return;
+            }
+
+            SUPABASE_URL = document.getElementById('projectUrl').value.trim();
+            SUPABASE_ANON_KEY = document.getElementById('anonKey').value.trim();
+            
+            document.getElementById('config-url').textContent = SUPABASE_URL;
+            document.getElementById('config-key').textContent = SUPABASE_ANON_KEY.substring(0, 50) + '...';
+            
+            updateStatus('credentials-status', '🟢 Credentials Updated', 'green');
+            console.log('🔑 Updated credentials');
+            
+            // Run tests after 1 second
+            setTimeout(runTests, 1000);
+        }
+
+        async function runTests() {
+            console.log('🧪 Starting tests...');
+            resetStatus();
+
+            // Test 1: Library Check
+            try {
+                if (typeof supabase === 'undefined') {
+                    throw new Error('Supabase library not loaded');
+                }
+                updateStatus('library-status', '🟢 Library Loaded', 'green');
+            } catch (error) {
+                updateStatus('library-status', '🔴 ' + error.message, 'red');
+                return;
+            }
+
+            // Test 2: Connection Test
+            try {
+                const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                
+                // Simple connection test
+                const { data, error } = await supabaseClient
+                    .from('products')
+                    .select('id')
+                    .limit(1);
+
+                if (error) throw error;
+                
+                updateStatus('connection-status', '🟢 Connected to Supabase!', 'green');
+            } catch (error) {
+                updateStatus('connection-status', '🔴 Connection Failed: ' + error.message, 'red');
+                showErrorTips(error);
+                return;
+            }
+
+            const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+            // Test 3: Table Access
+            try {
+                const { data: products, error } = await supabaseClient
+                    .from('products')
+                    .select('*')
+                    .limit(10);
+
+                if (error) throw error;
+                
+                updateStatus('table-status', `🟢 Table OK: ${products.length} products`, 'green');
+                
+                if (products.length > 0) {
+                    updateStatus('data-status', '🟢 Data loaded successfully', 'green');
+                    displayProducts(products);
+                } else {
+                    updateStatus('data-status', '🟡 Table exists but no data', 'orange');
+                }
+                
+            } catch (error) {
+                updateStatus('table-status', '🔴 Table Error: ' + error.message, 'red');
+                updateStatus('data-status', '🔴 Data load failed', 'red');
+            }
+        }
+
+        function resetStatus() {
+            const ids = ['library-status', 'connection-status', 'table-status', 'data-status'];
+            ids.forEach(id => updateStatus(id, '⏳ Testing...', 'orange'));
+        }
+
+        function updateStatus(elementId, message, color) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                const statusElement = element.querySelector('.status');
+                statusElement.textContent = message;
+                statusElement.style.color = color;
+                statusElement.style.fontWeight = 'bold';
+            }
+        }
+
+        function displayProducts(products) {
+            const container = document.getElementById('products-container');
+            const productsList = document.getElementById('products-list');
+            
+            productsList.style.display = 'block';
+            
+            let html = '<div style="display: grid; gap: 8px;">';
+            products.forEach(product => {
+                html += `
+                    <div style="padding: 8px; border: 1px solid #dee2e6; border-radius: 4px; background: white;">
+                        <div style="font-weight: bold;">${product.name || 'Unnamed Product'}</div>
+                        <div style="font-size: 12px; color: #666;">
+                            ₹${product.price || 'N/A'} | ${product.category || 'No Category'} | ID: ${product.id}
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            
+            container.innerHTML = html;
+        }
+
+        function showErrorTips(error) {
+            const tips = `
+                <div style="margin-top: 10px; padding: 10px; background: #f8d7da; border-radius: 4px; font-size: 14px;">
+                    <strong>🔧 Troubleshooting:</strong>
+                    <ul style="margin: 8px 0; padding-left: 20px;">
+                        <li>✅ Use <strong>anon public</strong> key (NOT service_role)</li>
+                        <li>✅ Project URL correct format: https://xxx.supabase.co</li>
+                        <li>✅ Internet connection check karo</li>
+                        <li>✅ Supabase project active hai?</li>
+                        <li>✅ products table create ki thi?</li>
+                    </ul>
+                    <details style="margin-top: 8px;">
+                        <summary>Technical Details</summary>
+                        <code style="font-size: 12px;">${error.message}</code>
+                    </details>
+                </div>
+            `;
+            document.getElementById('connection-status').innerHTML += tips;
+        }
+
+        // Add some sample credentials hint
+        document.getElementById('projectUrl').placeholder = "https://abc123xyz.supabase.co";
+        document.getElementById('anonKey').placeholder = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
+    </script>
+
+    <style>
+        .test-item {
+            padding: 12px 16px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            background: #f8f9fa;
+        }
+        .status {
+            float: right;
+            font-weight: bold;
+        }
+        input:focus {
+            border-color: #007bff !important;
+            outline: none;
+        }
+    </style>
+</body>
+</html>

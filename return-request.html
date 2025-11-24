@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Return - Arun Electric Solutions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .return-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .return-form {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .form-section {
+            margin-bottom: 25px;
+        }
+        
+        .form-section h3 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .order-search {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .order-search input {
+            flex: 1;
+        }
+        
+        .order-details {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .order-items-list {
+            margin: 10px 0;
+        }
+        
+        .order-item-select {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .return-reasons {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        
+        .reason-option {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .reason-option.selected {
+            border-color: #3498db;
+            background: #e3f2fd;
+        }
+        
+        .reason-option input {
+            margin-right: 10px;
+        }
+        
+        .refund-summary {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <div class="logo">
+            <a href="index.html"><h1>Arun <span>Electric</span></h1></a>
+        </div>
+            </div>
+            <div class="mobile-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <nav>
+                <ul class="nav-menu" id="main-nav">
+                    <!-- Navigation dynamically loaded by JavaScript -->
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Request Return</h1>
+            <p>Easy return process for your orders</p>
+        </div>
+    </section>
+
+    <!-- Return Request Content -->
+    <section class="page-content">
+        <div class="container return-container">
+            <div class="return-form">
+                <form id="returnRequestForm">
+                    <!-- Order Information -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-shopping-bag"></i> Order Information</h3>
+                        
+                        <div class="order-search">
+                            <input type="text" id="orderSearch" placeholder="Enter Order ID (e.g., ARN-123456789)" class="form-control">
+                            <button type="button" class="btn" onclick="searchOrder()">
+                                <i class="fas fa-search"></i> Search
+                            </button>
+                        </div>
+                        
+                        <div class="order-details" id="orderDetails">
+                            <!-- Order details will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Return Items -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-box"></i> Select Items to Return</h3>
+                        <div class="order-items-list" id="orderItemsList">
+                            <!-- Items will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Return Reason -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-clipboard-list"></i> Return Reason</h3>
+                        
+                        <div class="return-reasons">
+                            <label class="reason-option">
+                                <input type="radio" name="returnReason" value="defective" required>
+                                <div>
+                                    <strong>Defective Product</strong>
+                                    <small>Item is not working or damaged</small>
+                                </div>
+                            </label>
+                            
+                            <label class="reason-option">
+                                <input type="radio" name="returnReason" value="wrong-item">
+                                <div>
+                                    <strong>Wrong Item Received</strong>
+                                    <small>Received different product than ordered</small>
+                                </div>
+                            </label>
+                            
+                            <label class="reason-option">
+                                <input type="radio" name="returnReason" value="not-needed">
+                                <div>
+                                    <strong>No Longer Needed</strong>
+                                    <small>Changed my mind or don't need it anymore</small>
+                                </div>
+                            </label>
+                            
+                            <label class="reason-option">
+                                <input type="radio" name="returnReason" value="quality-issue">
+                                <div>
+                                    <strong>Quality Issues</strong>
+                                    <small>Product quality not as expected</small>
+                                </div>
+                            </label>
+                        </div>
+                        
+                        <div class="form-group" style="margin-top: 15px;">
+                            <label for="additionalNotes">Additional Notes</label>
+                            <textarea id="additionalNotes" class="form-control" rows="3" placeholder="Please provide any additional details about your return..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Refund Summary -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-rupee-sign"></i> Refund Summary</h3>
+                        <div class="refund-summary" id="refundSummary">
+                            <p>Select items and reason to see refund details</p>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="form-section">
+                        <button type="submit" class="btn btn-full btn-success">
+                            <i class="fas fa-paper-plane"></i> Submit Return Request
+                        </button>
+                        <p class="terms-notice">
+                            By submitting this request, you agree to our <a href="return-policy.html">Return Policy</a>.
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer-component></footer-component>
+    
+    <!-- Scripts -->
+    <script src="footer-component.js"></script>
+    <script src="supabase-config.js"></script>
+<script src="supabase-products.js"></script>
+<script src="auth.js"></script>  <!-- ✅ AUTH BEFORE SCRIPT -->
+<script src="script.js"></script>
+    <script src="return-request.js"></script>
+</body>
+</html>

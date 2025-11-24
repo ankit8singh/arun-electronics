@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electrical Products - Arun Electric Solutions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+               <div class="logo">
+            <a href="index.html"><h1>Arun <span>Electric</span></h1></a>
+        </div>
+            </div>
+            <div class="mobile-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <nav>
+                <ul class="nav-menu" id="main-nav">
+                    <!-- Navigation dynamically loaded by JavaScript -->
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Electrical Products</h1>
+            <p>High-quality electrical materials and components</p>
+        </div>
+    </section>
+
+    <!-- Products Content -->
+    <section class="page-content">
+        <div class="container">
+            <!-- Shop Controls -->
+            <div class="shop-controls" id="category-filters">
+                <div class="categories">
+                    <button class="category-btn active" data-category="all">All Products</button>
+                    <button class="category-btn" data-category="led-bulbs">LED Bulbs</button>
+                    <button class="category-btn" data-category="tube-lights">Tube Lights</button>
+                    <button class="category-btn" data-category="panel-lights">Panel Lights</button>
+                    <button class="category-btn" data-category="wires">Electrical Wires</button>
+                    <button class="category-btn" data-category="switches">Switches & Sockets</button>
+                    <button class="category-btn" data-category="holders">Holders</button>
+                    <button class="category-btn" data-category="extension">Extension Boards</button>
+                    <button class="category-btn" data-category="decorative">Decorative Lights</button>
+                </div>
+                <div class="search-sort">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search products...">
+                    </div>
+                    <select class="sort-select">
+                        <option value="default">Sort by</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="popular">Most Popular</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="products-grid" id="all-products">
+                <!-- Products will be loaded by JavaScript -->
+            </div>
+
+            <!-- Product Features -->
+            <div class="product-features">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Quality Guarantee</h3>
+                    <p>All products come with manufacturer warranty and quality assurance</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3>Free Delivery</h3>
+                    <p>Free home delivery on orders above ₹500 within city limits</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <h3>Easy Returns</h3>
+                    <p>7-day return policy for defective products</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>Expert Support</h3>
+                    <p>Get installation guidance from our electrical experts</p>
+                </div>
+            </div>
+        </div>
+    </section>
+<div id="debug-info" style="display: none; background: #f8f9fa; padding: 10px; margin: 10px; border-radius: 5px;">
+    <h3>Debug Info</h3>
+    <div id="debug-content"></div>
+</div>
+    <!-- Footer Component -->
+    <footer-component></footer-component>
+    
+    <!-- Scripts -->
+    
+    <!-- Sticky Call Button -->
+    <a href="tel:+919084984045" class="sticky-call">
+        <i class="fas fa-phone"></i>
+    </a>
+<script src="footer-component.js"></script>
+<script src="supabase-config.js"></script>
+<script src="supabase-products.js"></script>
+<script src="auth.js"></script>  <!-- ✅ AUTH BEFORE SCRIPT -->
+<script src="script.js"></script>
+</body>
+</html>

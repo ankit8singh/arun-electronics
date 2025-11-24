@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arun Electric Solutions | Home</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <!-- Supabase CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+   <!-- Header -->
+<header>
+    <div class="container header-container">
+        <div class="logo">
+           <div class="logo">
+            <a href="index.html"><h1>Arun <span>Electric</span></h1></a>
+        </div>
+        </div>
+        <div class="mobile-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+        <nav>
+            <ul class="nav-menu" id="main-nav">
+                <!-- Navigation dynamically loaded by JavaScript -->
+            </ul>
+        </nav>
+    </div>
+</header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Reliable Electrical Repair & House Light Fitting</h1>
+            <p>Fast, safe electric work – तेज़ और सुरक्षित इलेक्ट्रिक सेवा</p>
+            <div class="hero-buttons">
+                <a href="tel:+919084984045" class="btn">Call Now</a>
+                <a href="https://wa.me/919084984045" class="btn btn-secondary">WhatsApp</a>
+                <a href="products.html" class="btn btn-outline">Shop Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Preview -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Our Services</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h3>Electric Repairing</h3>
+                    <p>Fan, light, switch repair, fuse, MCB, short circuits</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>House Wiring & Fitting</h3>
+                    <p>Complete wiring, switchboards, downlights, panels</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3>Decorative Lighting</h3>
+                    <p>Festival lights, wedding lights, LED strips</p>
+                </div>
+            </div>
+            <div class="text-center">
+                <a href="services.html" class="btn">View All Services</a>
+            </div>
+        </div>
+    </section>
+
+   <!-- Products Preview -->
+<!-- ✅ SIMPLE VERSION -->
+<section class="section bg-light">
+    <div class="container">
+        <h2 class="section-title">Featured Products</h2>
+        <div class="products-grid" id="featured-products">
+            <!-- Products will be loaded automatically by JavaScript -->
+        </div>
+        <div class="text-center">
+            <a href="products.html" class="btn">View All Products</a>
+        </div>
+    </div>
+</section>
+
+<!-- Gallery Preview -->
+<section class="section">
+    <div class="container">
+        <h2 class="section-title">Our Work Gallery</h2>
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <img src="images/gal5.jpeg" alt="Electrical Work">
+            </div>
+            <div class="gallery-item">
+                <img src="images/gal12.jpeg" alt="Light Installation">
+            </div>
+            <div class="gallery-item">
+                <img src="images/gal9.jpeg" alt="Wiring Work">
+            </div>
+        </div>
+        <div class="text-center">
+            <a href="gallery.html" class="btn">View Full Gallery</a>
+        </div>
+    </div>
+</section>
+
+    <!-- Why Choose Us -->
+    <section class="section bg-light">
+        <div class="container">
+            <h2 class="section-title">Why Choose Us?</h2>
+            <div class="features-grid">
+                <div class="feature">
+                    <i class="fas fa-user-shield"></i>
+                    <h3>Safety First</h3>
+                    <p>We follow all safety protocols for secure electrical work</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-clock"></i>
+                    <h3>Quick Service</h3>
+                    <p>Fast response and timely completion of projects</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-rupee-sign"></i>
+                    <h3>Affordable Pricing</h3>
+                    <p>Competitive rates without compromising quality</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-award"></i>
+                    <h3>Quality Work</h3>
+                    <p>Using premium materials and proven techniques</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <!-- Footer Component -->
+    <footer-component></footer-component>
+    
+    <!-- Scripts -->
+    <script src="footer-component.js"></script>
+    <!-- Sticky Call Button -->
+    <a href="tel:+919084984045" class="sticky-call">
+        <i class="fas fa-phone"></i>
+    </a>
+    <script src="supabase-config.js"></script>
+<script src="supabase-products.js"></script>
+    <script src="auth.js"></script>  
+<script src="products.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

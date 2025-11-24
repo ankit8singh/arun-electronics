@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Successful - Arun Electric Solutions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .success-container {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        
+        .success-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        .success-icon {
+            font-size: 5rem;
+            color: #27ae60;
+            margin-bottom: 20px;
+        }
+        
+        .success-card h1 {
+            color: #27ae60;
+            margin-bottom: 15px;
+        }
+        
+        .order-details {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 25px 0;
+            text-align: left;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .action-buttons .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px;
+        }
+        
+        .support-info {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 25px;
+        }
+        
+        .return-info {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        
+        @media (max-width: 768px) {
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .success-card {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <div class="logo">
+            <a href="index.html"><h1>Arun <span>Electric</span></h1></a>
+        </div>
+            </div>
+            <div class="mobile-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <nav>
+                <ul class="nav-menu" id="main-nav">
+                    <!-- Navigation dynamically loaded by JavaScript -->
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Success Content -->
+    <section class="success-container">
+        <div class="container">
+            <div class="success-card">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                
+                <h1>Order Placed Successfully!</h1>
+                <p class="success-message">Thank you for your order. We have received your order and will process it shortly.</p>
+                
+                <!-- Order Details -->
+                <div class="order-details">
+                    <h3 style="text-align: center; margin-bottom: 15px;">Order Summary</h3>
+                    
+                    <div class="detail-row">
+                        <span><strong>Order ID:</strong></span>
+                        <span id="success-order-id">ARN-2025001</span>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <span><strong>Order Date:</strong></span>
+                        <span id="success-order-date">Loading...</span>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <span><strong>Total Amount:</strong></span>
+                        <span id="success-order-total">₹0</span>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <span><strong>Payment Method:</strong></span>
+                        <span id="success-payment-method">Cash on Delivery</span>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <span><strong>Delivery Method:</strong></span>
+                        <span id="success-delivery-method">Home Delivery</span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <a href="products.html" class="btn btn-primary">
+                        <i class="fas fa-shopping-bag"></i>
+                        Continue Shopping
+                    </a>
+                    
+                    <a href="https://wa.me/919084984045" class="btn btn-success" target="_blank">
+                        <i class="fab fa-whatsapp"></i>
+                        Track on WhatsApp
+                    </a>
+                    
+                    <a href="order-history.html" class="btn btn-outline">
+                        <i class="fas fa-history"></i>
+                        View Order History
+                    </a>
+                    
+                    <a href="return-policy.html" class="btn btn-outline">
+                        <i class="fas fa-undo"></i>
+                        Return Policy
+                    </a>
+                </div>
+
+                <!-- Return Information -->
+                <div class="return-info">
+                    <h4><i class="fas fa-info-circle"></i> Need to Return an Item?</h4>
+                    <p>You can request a return within 7 days of delivery. Check our return policy for details.</p>
+                    <div style="margin-top: 10px;">
+                        <a href="return-policy.html" class="btn btn-small" style="margin-right: 10px;">
+                            <i class="fas fa-file-alt"></i> Return Policy
+                        </a>
+                        <a href="return-request.html" class="btn btn-small btn-outline">
+                            <i class="fas fa-undo"></i> Request Return
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Support Information -->
+                <div class="support-info">
+                    <h4><i class="fas fa-headset"></i> Need Help?</h4>
+                    <p>Our customer support team is here to help you with any questions about your order.</p>
+                    <div style="margin-top: 15px;">
+                        <a href="tel:+919084984045" class="btn" style="margin-right: 10px;">
+                            <i class="fas fa-phone"></i> Call Now
+                        </a>
+                        <a href="https://wa.me/919084984045" class="btn btn-success" target="_blank">
+                            <i class="fab fa-whatsapp"></i> WhatsApp Support
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer-component></footer-component>
+    
+    <!-- Scripts -->
+    <script src="footer-component.js"></script>
+    <script src="supabase-config.js"></script>
+<script src="supabase-products.js"></script>
+<script src="auth.js"></script>  <!-- ✅ AUTH BEFORE SCRIPT -->
+<script src="script.js"></script>
+    <script>
+        // Get order details from URL parameters or localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('orderId');
+            
+            let orderDetails = null;
+            
+            // Try to get from URL parameters first
+            if (orderId) {
+                const orders = JSON.parse(localStorage.getItem('adminOrders')) || [];
+                orderDetails = orders.find(order => order.orderId === orderId);
+            }
+            
+            // If not found, get the latest order
+            if (!orderDetails) {
+                const orders = JSON.parse(localStorage.getItem('adminOrders')) || [];
+                orderDetails = orders[orders.length - 1]; // Latest order
+            }
+            
+            if (orderDetails) {
+                // Populate order details
+                document.getElementById('success-order-id').textContent = orderDetails.orderId;
+                document.getElementById('success-order-date').textContent = orderDetails.date;
+                document.getElementById('success-order-total').textContent = `₹${orderDetails.summary?.total || 0}`;
+                document.getElementById('success-payment-method').textContent = orderDetails.payment?.method || 'Cash on Delivery';
+                document.getElementById('success-delivery-method').textContent = orderDetails.delivery?.method || 'Home Delivery';
+                
+                // Update WhatsApp link with order details
+                const whatsappBtn = document.querySelector('.btn-success[href*="whatsapp"]');
+                const message = `Hello, I want to track my order. Order ID: ${orderDetails.orderId}`;
+                whatsappBtn.href = `https://wa.me/919084984045?text=${encodeURIComponent(message)}`;
+                
+                // Update return request link with order ID
+                const returnRequestBtn = document.querySelector('a[href="return-request.html"]');
+                returnRequestBtn.href = `return-request.html?orderId=${orderDetails.orderId}`;
+            } else {
+                // If no order found, show generic message
+                document.getElementById('success-order-id').textContent = 'Not Available';
+                document.querySelector('.success-message').textContent = 'Thank you for your order!';
+            }
+            
+            // Clear cart after successful order
+            localStorage.removeItem('cart');
+            updateCartCount();
+        });
+        
+        function updateCartCount() {
+            const cartCountElements = document.querySelectorAll('.cart-count');
+            if (cartCountElements.length > 0) {
+                cartCountElements.forEach(element => {
+                    element.textContent = '0';
+                });
+            }
+        }
+    </script>
+</body>
+</html>

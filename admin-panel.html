@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Arun Electric</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-container {
+            min-height: 100vh;
+            background: #f5f6fa;
+        }
+
+        .admin-header {
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-nav {
+            background: #2c3e50;
+            color: white;
+            padding: 0;
+        }
+
+        .admin-nav ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        .admin-nav li {
+            padding: 15px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .admin-nav li.active,
+        .admin-nav li:hover {
+            background: #34495e;
+            border-bottom-color: #3498db;
+        }
+
+        .admin-content {
+            padding: 20px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .admin-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .btn-admin {
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        .btn-admin.success {
+            background: #27ae60;
+        }
+
+        .btn-admin.danger {
+            background: #e74c3c;
+        }
+
+        .products-list {
+            margin-top: 20px;
+        }
+
+        .product-item {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-actions button {
+            margin-left: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Order Management Styling */
+        .orders-filter {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .orders-filter select {
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            background: white;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #3498db;
+        }
+
+        .order-card[data-status="pending"] {
+            border-left-color: #f39c12;
+        }
+
+        .order-card[data-status="confirmed"] {
+            border-left-color: #3498db;
+        }
+
+        .order-card[data-status="processing"] {
+            border-left-color: #9b59b6;
+        }
+
+        .order-card[data-status="shipped"] {
+            border-left-color: #e67e22;
+        }
+
+        .order-card[data-status="delivered"] {
+            border-left-color: #27ae60;
+        }
+
+        .order-card[data-status="cancelled"] {
+            border-left-color: #e74c3c;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .order-info h4 {
+            margin: 0 0 5px 0;
+            color: #2c3e50;
+        }
+
+        .order-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .customer {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .date {
+            color: #95a5a6;
+            font-size: 0.8rem;
+        }
+
+        .order-amount {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #27ae60;
+        }
+
+        .order-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .order-items-preview {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            flex: 1;
+        }
+
+        .order-status-badges {
+            display: flex;
+            gap: 10px;
+        }
+
+        .status-badge,
+        .payment-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-badge.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-badge.confirmed {
+            background: #cce7ff;
+            color: #004085;
+        }
+
+        .status-badge.processing {
+            background: #e8d7f7;
+            color: #4b0082;
+        }
+
+        .status-badge.shipped {
+            background: #ffeaa7;
+            color: #e17055;
+        }
+
+        .status-badge.delivered {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge.cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .payment-badge.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .payment-badge.paid {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .payment-badge.failed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-admin.small {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #7f8c8d;
+        }
+
+        /* Modal Styling */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-content.large {
+            max-width: 700px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .detail-section h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        .detail-item label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .order-items-details {
+            margin: 20px 0;
+        }
+
+        .order-item-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        .order-summary-details {
+            border-top: 2px solid #eee;
+            padding-top: 15px;
+            margin-top: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .summary-row.total {
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        /* Notification Styling */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            z-index: 1001;
+            border-left: 4px solid #3498db;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left-color: #27ae60;
+        }
+
+        .notification.error {
+            border-left-color: #e74c3c;
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notification-content i {
+            font-size: 1.2rem;
+        }
+
+        .notification.success i {
+            color: #27ae60;
+        }
+
+        .notification.error i {
+            color: #e74c3c;
+        }
+
+        /* Return Request Styling */
+        .return-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #ffa726;
+        }
+
+        .return-card[data-status="requested"] {
+            border-left-color: #ffa726;
+        }
+
+        .return-card[data-status="approved"] {
+            border-left-color: #42a5f5;
+        }
+
+        .return-card[data-status="rejected"] {
+            border-left-color: #ef5350;
+        }
+
+        .return-card[data-status="received"] {
+            border-left-color: #66bb6a;
+        }
+
+        .return-card[data-status="refunded"] {
+            border-left-color: #4caf50;
+        }
+
+        .return-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .return-info h4 {
+            margin: 0 0 5px 0;
+            color: #2c3e50;
+        }
+
+        .return-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .order-ref {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .return-amount {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+
+        .return-details {
+            margin-bottom: 15px;
+        }
+
+        .return-reason,
+        .return-items {
+            margin-bottom: 8px;
+            color: #7f8c8d;
+        }
+
+        .return-status-badges {
+            margin-bottom: 15px;
+        }
+
+        .return-status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .return-status-badge.requested {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .return-status-badge.approved {
+            background: #cce7ff;
+            color: #004085;
+        }
+
+        .return-status-badge.rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .return-status-badge.received {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .return-status-badge.refunded {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .return-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1><i class="fas fa-cogs"></i> Admin Panel - Arun Electric</h1>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+
+        <nav class="admin-nav">
+            <ul>
+                <li class="active" onclick="showTab('dashboard')">Dashboard</li>
+                <li onclick="showTab('addProduct')">Add Product</li>
+                <li onclick="showTab('manageProducts')">Manage Products</li>
+                <li onclick="showTab('orders')">Orders</li>
+                <li onclick="showTab('returns')">Returns</li>
+            </ul>
+        </nav>
+
+        <div class="admin-content">
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalProducts">0</div>
+                        <div>Total Products</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalOrders">0</div>
+                        <div>Total Orders</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">₹<span id="totalRevenue">0</span></div>
+                        <div>Total Revenue</div>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <h3>Quick Actions</h3>
+                    <button class="btn-admin success" onclick="showTab('addProduct')">
+                        <i class="fas fa-plus"></i> Add New Product
+                    </button>
+                    <button class="btn-admin" onclick="showTab('manageProducts')">
+                        <i class="fas fa-edit"></i> Manage Products
+                    </button>
+                </div>
+            </div>
+
+            <!-- Add Product Tab -->
+            <div id="addProduct" class="tab-content">
+                <div class="admin-card">
+                    <h3>Add New Product</h3>
+                    <form id="addProductForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="productName">Product Name *</label>
+                                <input type="text" id="productName" name="productName" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="productCategory">Category *</label>
+                                <select id="productCategory" name="productCategory" required>
+                                    <option value="">Select Category</option>
+                                    <option value="led-bulbs">LED Bulbs</option>
+                                    <option value="tube-lights">Tube Lights</option>
+                                    <option value="panel-lights">Panel Lights</option>
+                                    <option value="wires">Electrical Wires</option>
+                                    <option value="switches">Switches & Sockets</option>
+                                    <option value="holders">Holders</option>
+                                    <option value="extension">Extension Boards</option>
+                                    <option value="decorative">Decorative Lights</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="productPrice">Current Price (₹) *</label>
+                                <input type="number" id="productPrice" name="productPrice" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="originalPrice">Original Price (₹)</label>
+                                <input type="number" id="originalPrice" name="originalPrice">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="productDiscount">Discount (%)</label>
+                                <input type="number" id="productDiscount" name="productDiscount" min="0" max="100">
+                            </div>
+
+                            <!-- Admin panel me file input add karo -->
+                            <div class="form-group">
+                                <label>Product Image:</label>
+
+                                <!-- Option 1: File Upload -->
+                                <input type="file" id="productImageFile" accept="image/*">
+                                <small>Upload new image (JPG, PNG, WebP)</small>
+
+                                <!-- Option 2: URL Input -->
+                                <input type="text" id="productImageUrl" placeholder="Or enter image URL">
+                                <small>External image URL (optional)</small>
+
+                                <!-- Image Preview -->
+                                <div id="imagePreview" style="margin-top: 10px;"></div>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label for="productDescription">Description *</label>
+                                <textarea id="productDescription" name="productDescription" required></textarea>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label for="productFeatures">Features (one per line) *</label>
+                                <textarea id="productFeatures" name="productFeatures" required
+                                    placeholder="Feature 1&#10;Feature 2&#10;Feature 3"></textarea>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label for="productSpecs">Specifications (JSON format)</label>
+                                <textarea id="productSpecs" name="productSpecs"
+                                    placeholder='{"Wattage": "9W", "Lumen": "800LM"}'></textarea>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-admin success">
+                            <i class="fas fa-save"></i> Add Product
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Manage Products Tab -->
+            <div id="manageProducts" class="tab-content">
+                <div class="admin-card">
+                    <h3>Manage Products</h3>
+                    <div class="products-list" id="productsList">
+                        <!-- Products will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Tab -->
+            <div id="orders" class="tab-content">
+                <div class="admin-card">
+                    <h3>Order Management</h3>
+
+                    <!-- Orders Filter -->
+                    <div class="orders-filter">
+                        <select id="order-status-filter" onchange="adminPanel.filterOrders()">
+                            <option value="all">All Orders</option>
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="processing">Processing</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+
+                        <select id="payment-status-filter" onchange="adminPanel.filterOrders()">
+                            <option value="all">All Payments</option>
+                            <option value="pending">Payment Pending</option>
+                            <option value="paid">Paid</option>
+                            <option value="failed">Failed</option>
+                        </select>
+                    </div>
+
+                    <div class="orders-list" id="ordersList">
+                        <!-- Orders will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Returns Management Tab -->
+        <div id="returns" class="tab-content">
+            <div class="admin-card">
+                <h3><i class="fas fa-undo"></i> Return & Refund Management</h3>
+
+                <!-- Returns Filter -->
+                <div class="orders-filter">
+                    <select id="return-status-filter" onchange="adminPanel.filterReturns()">
+                        <option value="all">All Returns</option>
+                        <option value="requested">Requested</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                        <option value="received">Received</option>
+                        <option value="refunded">Refunded</option>
+                    </select>
+                </div>
+
+                <div class="returns-list" id="returnsList">
+                    <!-- Return requests will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin-panel.js"></script>
+</body>
+
+</html>
