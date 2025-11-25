@@ -983,7 +983,8 @@ function updateCheckoutSummary() {
 
 // Place order function
 // ✅ UPDATED: Place order function - Save to both admin and user
-function placeOrder() {
+// ✅ UPDATED: Place order function - Save to Supabase
+async function placeOrder() {
     console.log('🛒 Place order clicked');
     
     // Validate form
@@ -1011,26 +1012,14 @@ function placeOrder() {
     const deliveryCharge = deliveryMethod === 'home' ? (subtotal > 500 ? 0 : 50) : 0;
     const total = subtotal + deliveryCharge;
     
-    // Create order
-    const orderDetails = {
-        orderId: 'ARN-' + Date.now(),
-        customer: { 
-            name, 
-            phone, 
-            email: document.getElementById('email')?.value || '',
-            address, 
-            pincode 
-        },
-        delivery: {
-            method: deliveryMethod === 'home' ? 'Home Delivery' : 'Pick-up from Shop',
-            charges: deliveryCharge
-        },
-        payment: {
-            method: paymentMethod === 'cod' ? 'Cash on Delivery' : 'UPI Payment',
-            status: paymentMethod === 'cod' ? 'pending' : 'pending',
-            paidAt: null
-        },
-        status: 'pending',
+    // Create order data for Supabase
+    const orderData = {
+        order_id: 'ARN-' + Date.now(),
+        customer_name: name,
+        customer_phone: phone,
+        customer_email: document.getElementById('email')?.value || '',
+        customer_address: address,
+        customer_pincode: pincode,
         items: cart.map(item => ({
             name: item.name,
             quantity: item.quantity,
@@ -1042,38 +1031,113 @@ function placeOrder() {
             delivery: deliveryCharge,
             total: total
         },
-        date: new Date().toLocaleString('en-IN', { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        }),
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        total_amount: total,
+        status: 'pending',
+        payment_status: paymentMethod === 'cod' ? 'pending' : 'pending',
+        payment_method: paymentMethod === 'cod' ? 'Cash on Delivery' : 'UPI Payment',
+        delivery_method: deliveryMethod === 'home' ? 'Home Delivery' : 'Pick-up from Shop',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
     };
     
-    console.log('📦 Order Created:', orderDetails);
+    console.log('📦 Order Data for Supabase:', orderData);
     
-    // ✅ SAVE TO BOTH ADMIN AND USER
-    saveOrderToAdmin(orderDetails);
-    saveOrderToUser(orderDetails);
+    try {
+        // ✅ SAVE ORDER TO SUPABASE
+        const { data, error } = await window.supabase
+            .from('orders')
+            .insert([orderData])
+            .select();
+            
+        if (error) {
+            console.error('❌ Supabase Order Insert Error:', error);
+            showNotification('Error saving order. Please try again.', 'error');
+            return;
+        }
+        
+        console.log('✅ Order saved to Supabase:', data);
+        
+        // ✅ ALSO SAVE TO LOCALSTORAGE (BACKUP)
+        saveOrderToLocalStorage(orderData);
+        
+        // Clear cart
+        cart = [];
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartCount();
+        
+        // Show success message
+        showNotification('Order placed successfully!', 'success');
+        
+        // Redirect to success page
+        setTimeout(() => {
+            window.location.href = `order-success.html?orderId=${orderData.order_id}`;
+        }, 1500);
+        
+        // Send WhatsApp message
+        const whatsappMessage = createWhatsAppMessage(orderData);
+        const whatsappUrl = `https://wa.me/919084984045?text=${encodeURIComponent(whatsappMessage)}`;
+        
+        setTimeout(() => {
+            window.open(whatsappUrl, '_blank');
+        }, 2000);
+        
+    } catch (error) {
+        console.error('❌ Order placement error:', error);
+        showNotification('Error placing order. Please try again.', 'error');
+    }
+}
+
+// ✅ Backup function - Save to localStorage
+function saveOrderToLocalStorage(order) {
+    const orders = JSON.parse(localStorage.getItem('adminOrders')) || [];
+    orders.push(order);
+    localStorage.setItem('adminOrders', JSON.stringify(orders));
+    console.log('✅ Order saved to localStorage backup');
+}
+
+// ✅ Update WhatsApp message function for new order structure
+function createWhatsAppMessage(order) {
+    let message = `🛍️ *NEW ORDER - ${order.order_id}*\n\n`;
     
-    // Clear cart
-    cart = [];
-    localStorage.setItem('cart', JSON.stringify(cart));
-    updateCartCount();
+    // Customer Details
+    message += `👤 *CUSTOMER DETAILS:*\n`;
+    message += `• Name: ${order.customer_name}\n`;
+    message += `• Phone: ${order.customer_phone}\n`;
+    if (order.customer_email) {
+        message += `• Email: ${order.customer_email}\n`;
+    }
+    message += `• Address: ${order.customer_address}, ${order.customer_pincode}\n\n`;
     
-    // Redirect to success page
-    window.location.href = `order-success.html?orderId=${orderDetails.orderId}`;
+    // Delivery & Payment
+    message += `🚚 *DELIVERY:* ${order.delivery_method}\n`;
+    message += `💳 *PAYMENT:* ${order.payment_method}\n`;
+    message += `📊 *PAYMENT STATUS:* ${order.payment_status}\n\n`;
     
-    // Send WhatsApp message
-    const whatsappMessage = createWhatsAppMessage(orderDetails);
-    const whatsappUrl = `https://wa.me/919084984045?text=${encodeURIComponent(whatsappMessage)}`;
+    // UPI Instructions if applicable
+    if (order.payment_method === 'UPI Payment') {
+        message += `📱 *UPI INSTRUCTIONS:*\n`;
+        message += `• UPI ID: arn.electric@okhdfcbank\n`;
+        message += `• Amount: ₹${order.total_amount}\n`;
+        message += `• Please share payment screenshot\n\n`;
+    }
     
-    setTimeout(() => {
-        window.open(whatsappUrl, '_blank');
-    }, 1000);
+    // Order Items
+    message += `📦 *ORDER ITEMS:*\n`;
+    order.items.forEach(item => {
+        message += `• ${item.name} (Qty: ${item.quantity}) - ₹${item.total}\n`;
+    });
+    
+    // Order Summary
+    message += `\n💰 *ORDER SUMMARY:*\n`;
+    message += `• Subtotal: ₹${order.summary.subtotal}\n`;
+    message += `• Delivery: ₹${order.summary.delivery}\n`;
+    message += `• *Total: ₹${order.total_amount}*\n\n`;
+    
+    // Additional Info
+    message += `📅 Order Date: ${new Date(order.created_at).toLocaleString('en-IN')}\n`;
+    message += `🆔 Order ID: ${order.order_id}\n`;
+    
+    return message;
 }
 
 // ✅ NEW: Save order to admin (existing)
